@@ -627,6 +627,7 @@
     }
 
     .design-ship-image,
+    .design-paint-canvas,
     .design-color-layer {
       position: absolute;
       inset: 0;
@@ -635,37 +636,47 @@
     }
 
     .design-ship-image {
+      z-index: 1;
       object-fit: contain;
       border-radius: 16px;
       background: rgba(255,255,255,0.94);
       box-shadow: 0 24px 46px rgba(0,0,0,0.34);
     }
 
-    .design-color-layer {
+    .design-paint-canvas {
       z-index: 2;
+      border-radius: 16px;
       mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .design-color-layer {
+      z-index: 3;
     }
 
     .paint-region {
       cursor: pointer;
+      pointer-events: all;
       fill-opacity: 0;
       stroke: transparent;
-      stroke-width: 8;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
       transition: fill-opacity 0.16s ease, stroke 0.16s ease;
     }
 
     .paint-region.is-painted {
-      fill-opacity: 0.52;
+      fill-opacity: 0;
     }
 
     .paint-region:hover,
     .paint-region.is-selected {
-      stroke: rgba(246,195,67,0.95);
+      stroke: transparent;
     }
 
     .paint-region.is-painted:hover,
     .paint-region.is-painted.is-selected {
-      fill-opacity: 0.68;
+      fill-opacity: 0;
     }
 
     .rocket-part {
@@ -1388,6 +1399,17 @@
       { id: "shield", name: "外层保护罩" }
     ];
 
+    const DESIGN_REGION_MASKS = {
+      body: "resourse/paint-mask-body.png",
+      shieldStripe: "resourse/paint-mask-shieldStripe.png",
+      window: "resourse/paint-mask-window.png",
+      tail: "resourse/paint-mask-tail.png",
+      shield: "resourse/paint-mask-shield.png"
+    };
+
+    const designMaskImages = {};
+    let designMasksLoading = false;
+
     const FLAG_POSITIONS = [
       { id: "bodyLeft", name: "机身左侧" },
       { id: "bodyRight", name: "机身右侧" },
@@ -1687,12 +1709,13 @@
               <div class="design-rocket-wrap">
                 <div class="design-rocket ${appState.design.completed ? "showcase" : ""}">
                   <img class="design-ship-image" src="resourse/empty-ship.png" alt="火星探索中国号飞船线稿">
+                  <canvas class="design-paint-canvas" width="1254" height="1254" aria-hidden="true"></canvas>
                   <svg class="design-color-layer" viewBox="0 0 1254 1254" aria-label="飞船可涂色区域">
-                    <path class="paint-region ${paintClass("shield")}" data-action="select-part" data-part="shield" fill="${paintFill("shield")}" fill-rule="evenodd" d="M628 42 C835 48 993 132 1102 272 C1210 410 1236 590 1184 752 C1132 916 1008 1050 848 1130 C686 1210 510 1198 354 1118 C198 1038 82 890 48 710 C12 520 72 346 206 220 C324 108 470 38 628 42 Z M626 96 C480 100 350 160 240 262 C118 376 76 530 102 690 C130 848 236 986 382 1060 C526 1134 686 1144 828 1074 C976 1002 1092 878 1138 732 C1186 584 1162 424 1066 300 C970 174 822 100 626 96 Z"></path>
-                    <path class="paint-region ${paintClass("tail")}" data-action="select-part" data-part="tail" fill="${paintFill("tail")}" d="M160 600 C240 492 338 474 424 486 L306 684 L178 638 C142 624 134 620 160 600 Z M276 720 C230 782 254 900 404 952 L318 706 Z M584 896 C654 928 706 1018 612 1084 C566 1122 568 980 584 896 Z"></path>
-                    <path class="paint-region ${paintClass("body")}" data-action="select-part" data-part="body" fill="${paintFill("body")}" fill-rule="evenodd" d="M304 718 C330 598 420 476 548 388 C704 282 928 222 1038 252 C1110 272 1118 336 1094 432 C1050 612 896 782 728 884 C592 968 448 958 356 848 C318 802 294 760 304 718 Z M690 414 A108 108 0 1 1 689 630 A108 108 0 1 1 690 414 Z"></path>
-                    <circle class="paint-region ${paintClass("window")}" data-action="select-part" data-part="window" fill="${paintFill("window")}" cx="690" cy="522" r="72"></circle>
-                    <path class="paint-region ${paintClass("shieldStripe")}" data-action="select-part" data-part="shieldStripe" fill="${paintFill("shieldStripe")}" d="M784 266 C812 354 852 466 948 534 L910 600 C828 540 774 416 746 286 Z M852 246 C924 246 1000 276 1044 348 C1052 430 1016 500 948 534 C898 468 866 346 852 246 Z"></path>
+                    <path class="paint-region ${paintClass("shield")}" data-action="select-part" data-part="shield" fill="${paintFill("shield")}" fill-rule="evenodd" d="M626 39 C731 38 828 67 922 130 C1005 184 1065 194 1144 296 C1230 405 1241 532 1208 691 C1169 881 1038 1047 862 1132 C692 1215 522 1203 360 1118 C183 1025 72 862 47 680 C20 483 82 333 218 211 C302 136 372 131 462 72 C514 41 565 39 626 39 Z M626 97 C533 97 478 120 411 163 C350 202 303 213 241 268 C124 372 76 500 102 672 C126 830 221 974 382 1059 C527 1135 682 1147 835 1072 C990 996 1110 847 1146 679 C1175 539 1163 432 1093 342 C1033 266 973 247 894 199 C805 144 721 96 626 97 Z"></path>
+                    <path class="paint-region ${paintClass("tail")}" data-action="select-part" data-part="tail" fill="${paintFill("tail")}" d="M158 607 C181 557 244 513 300 491 C347 472 391 469 423 480 C384 536 346 595 308 682 L178 637 C157 630 151 621 158 607 Z M303 709 C306 776 346 876 490 930 C457 981 428 990 370 956 C287 907 243 821 258 759 C264 736 281 721 303 709 Z M584 905 C654 928 718 993 706 1048 C700 1072 680 1088 648 1094 C624 1099 618 1087 612 1060 L584 905 Z M288 727 C310 787 351 856 456 906 C433 934 409 936 374 918 C317 889 284 833 276 787 C272 759 276 739 288 727 Z"></path>
+                    <path class="paint-region ${paintClass("body")}" data-action="select-part" data-part="body" fill="${paintFill("body")}" fill-rule="evenodd" d="M303 712 C321 626 368 543 424 478 C540 344 703 287 784 264 C800 352 849 472 958 540 C943 610 905 685 846 755 C779 834 696 889 586 926 C525 946 462 929 410 879 C350 820 306 751 303 712 Z M690 402 A121 121 0 1 1 690 644 A121 121 0 1 1 690 402 Z"></path>
+                    <path class="paint-region ${paintClass("window")}" data-action="select-part" data-part="window" fill="${paintFill("window")}" d="M690 433 A89 89 0 1 1 690 611 A89 89 0 1 1 690 433 Z"></path>
+                    <path class="paint-region ${paintClass("shieldStripe")}" data-action="select-part" data-part="shieldStripe" fill="${paintFill("shieldStripe")}" d="M784 264 C798 344 839 450 928 516 C919 545 907 574 891 604 C816 552 764 419 746 273 C758 270 771 267 784 264 Z M834 256 C908 247 982 248 1017 274 C1052 300 1059 353 1048 418 C1036 472 1017 510 992 542 C901 504 850 370 834 256 Z"></path>
                   </svg>
                   <div class="flag-marker ${appState.design.flagPosition}">🇨🇳</div>
                 </div>
@@ -1928,7 +1951,57 @@
       `;
     }
 
+    function ensureDesignMasks(onReady) {
+      const entries = Object.entries(DESIGN_REGION_MASKS);
+      const ready = entries.every(([part]) => designMaskImages[part]);
+      if (ready) {
+        onReady();
+        return;
+      }
+      if (designMasksLoading) return;
+      designMasksLoading = true;
+      let remaining = entries.length;
+      entries.forEach(([part, src]) => {
+        const image = new Image();
+        image.onload = () => {
+          designMaskImages[part] = image;
+          remaining -= 1;
+          if (remaining === 0) {
+            designMasksLoading = false;
+            drawDesignPaintCanvas();
+          }
+        };
+        image.src = src;
+      });
+    }
+
+    function drawDesignPaintCanvas() {
+      const canvas = document.querySelector(".design-paint-canvas");
+      if (!canvas) return;
+      ensureDesignMasks(() => {
+        const ctx = canvas.getContext("2d");
+        const tintCanvas = document.createElement("canvas");
+        tintCanvas.width = canvas.width;
+        tintCanvas.height = canvas.height;
+        const tintCtx = tintCanvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        Object.entries(appState.design.colors).forEach(([part, color]) => {
+          if (!color || !designMaskImages[part]) return;
+          tintCtx.clearRect(0, 0, tintCanvas.width, tintCanvas.height);
+          tintCtx.globalCompositeOperation = "source-over";
+          tintCtx.globalAlpha = 1;
+          tintCtx.drawImage(designMaskImages[part], 0, 0, tintCanvas.width, tintCanvas.height);
+          tintCtx.globalCompositeOperation = "source-in";
+          tintCtx.fillStyle = color;
+          tintCtx.globalAlpha = 0.58;
+          tintCtx.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
+          ctx.drawImage(tintCanvas, 0, 0);
+        });
+      });
+    }
+
     function afterRender() {
+      drawDesignPaintCanvas();
       const codeBox = document.getElementById("codeBox");
       if (!codeBox) return;
       const activeLine = codeBox.querySelector(".code-line.is-active");
