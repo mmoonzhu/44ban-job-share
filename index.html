@@ -124,6 +124,10 @@
       box-shadow: var(--shadow);
     }
 
+    .topbar-hint {
+      display: none;
+    }
+
     .stage-nav {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -304,6 +308,16 @@
       align-items: start;
     }
 
+    .product-layout {
+      align-items: stretch;
+    }
+
+    .product-main-panel,
+    .product-side-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
     .wide-layout {
       display: grid;
       grid-template-columns: 1fr;
@@ -377,6 +391,7 @@
     }
 
     .product-scene {
+      flex: 1;
       min-height: 430px;
       display: grid;
       place-items: center;
@@ -521,7 +536,7 @@
       left: 22px;
       top: 22px;
       z-index: 4;
-      width: min(340px, calc(100% - 44px));
+      width: min(520px, calc(100% - 44px));
       min-height: 116px;
       padding: 16px 18px;
       border-radius: 12px;
@@ -533,10 +548,31 @@
       font-weight: 800;
       line-height: 1.48;
       backdrop-filter: blur(10px);
+      white-space: normal;
+      overflow-wrap: break-word;
     }
 
     .floating-wish-info:empty {
       display: none;
+    }
+
+    .product-task-card {
+      margin-bottom: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(105,219,124,0.68);
+      background: rgba(105,219,124,0.14);
+    }
+
+    .product-task-card h3 {
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .product-task-card .mission-list li {
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.38;
     }
 
     .wish-list {
@@ -596,13 +632,33 @@
       display: grid;
       grid-template-columns: minmax(360px, 1fr) 340px;
       gap: 18px;
-      align-items: start;
+      align-items: stretch;
+    }
+
+    .design-status-slot {
+      visibility: hidden;
+    }
+
+    .design-status-slot.is-visible {
+      visibility: visible;
+    }
+
+    .design-summary-slot {
+      visibility: hidden;
+    }
+
+    .design-summary-slot.is-visible {
+      visibility: visible;
     }
 
     .design-scene {
       min-height: 420px;
       display: grid;
       place-items: center;
+    }
+
+    .design-control-panel {
+      min-height: 0;
     }
 
     .design-rocket-wrap {
@@ -883,6 +939,11 @@
       min-height: 662px;
     }
 
+    .dev-map-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
     .dev-code-panel {
       display: flex;
       flex-direction: column;
@@ -906,8 +967,10 @@
     }
 
     .maze {
-      width: min(100%, 560px);
-      aspect-ratio: 1 / 1;
+      width: min(100%, 760px);
+      aspect-ratio: var(--maze-cols, 7) / var(--maze-rows, 5);
+      flex: 1;
+      min-height: 0;
       display: grid;
       gap: 6px;
       margin: 0 auto;
@@ -962,8 +1025,9 @@
     }
 
     .code-box {
-      height: 420px;
-      flex: none;
+      height: auto;
+      flex: 1;
+      min-height: 0;
       overflow: auto;
       padding: 12px;
       border-radius: 10px;
@@ -1046,6 +1110,7 @@
 
     .maintain-scene {
       min-height: 430px;
+      flex: 1;
       position: relative;
       overflow: hidden;
       border-radius: 12px;
@@ -1072,15 +1137,16 @@
     .return-ship {
       position: absolute;
       left: 18%;
-      top: 48%;
-      font-size: 86px;
-      transform: rotate(45deg);
-      transition: left 1.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      top: 68%;
+      font-size: 104px;
+      transform: rotate(35deg);
+      transition: left 1.2s ease, top 1.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
       filter: drop-shadow(0 16px 18px rgba(0,0,0,0.48));
     }
 
     .return-ship.success-flight {
       left: 72%;
+      top: 20%;
       animation: shipPop 0.7s ease both;
     }
 
@@ -1151,9 +1217,9 @@
 
     .maintain-control-row {
       display: grid;
-      grid-template-columns: 0.8fr 1.2fr;
+      grid-template-columns: 1fr;
       gap: 18px;
-      align-items: end;
+      align-items: stretch;
       margin-bottom: 18px;
     }
 
@@ -1164,6 +1230,12 @@
 
     .maintain-actions {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    .maintain-panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
     .ship-cold {
@@ -1327,6 +1399,464 @@
       to { box-shadow: inset 0 0 34px rgba(246,195,67,0.7); }
     }
 
+    @media (min-width: 981px) {
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      button, select {
+        min-height: 42px;
+      }
+
+      .app-shell {
+        height: 100vh;
+        padding: 10px 0 12px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        position: fixed;
+        left: 50%;
+        top: 0;
+        z-index: 30;
+        width: min(1180px, calc(100% - 32px));
+        padding: 8px;
+        transform: translate(-50%, calc(-100% + 8px));
+        transition: transform 0.18s ease;
+      }
+
+      .topbar::after {
+        content: "导航";
+        position: absolute;
+        right: 10px;
+        bottom: -24px;
+        min-width: 54px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        border-radius: 0 0 8px 8px;
+        border: 1px solid rgba(255,255,255,0.22);
+        border-top: 0;
+        color: rgba(255,255,255,0.82);
+        background: rgba(10, 17, 54, 0.78);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0;
+        backdrop-filter: blur(12px);
+      }
+
+      .topbar:hover,
+      .topbar:focus-within {
+        transform: translate(-50%, 0);
+      }
+
+      .stage-tab {
+        min-height: 48px;
+        padding: 7px 10px;
+      }
+
+      .stage-tab .title {
+        font-size: 16px;
+      }
+
+      .stage-tab .sub {
+        margin-top: 2px;
+        font-size: 12px;
+      }
+
+      .page {
+        flex: 1;
+        min-height: 0;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .home-page {
+        gap: 12px;
+      }
+
+      .home-page .hero {
+        flex: none;
+        min-height: 0;
+        padding: 24px 30px 30px;
+      }
+
+      .home-page h1 {
+        margin-bottom: 8px;
+        font-size: clamp(34px, 4.2vw, 52px);
+      }
+
+      .home-page .lead {
+        margin-bottom: 8px;
+        font-size: 21px;
+        line-height: 1.35;
+      }
+
+      .home-page .hero p:not(.lead) {
+        margin-bottom: 8px;
+        font-size: 18px;
+        line-height: 1.38;
+      }
+
+      .home-page .space-scene {
+        min-height: 190px;
+      }
+
+      .home-page .cards-grid {
+        flex: 1;
+        min-height: 0;
+        margin-top: 0;
+        gap: 12px;
+      }
+
+      .home-page .role-card {
+        min-height: 0;
+        padding: 16px;
+      }
+
+      .home-page .role-icon {
+        font-size: 42px;
+      }
+
+      .home-page .role-card h3 {
+        font-size: 21px;
+      }
+
+      .home-page .role-card p {
+        min-height: 0;
+        font-size: 16px;
+        line-height: 1.38;
+      }
+
+      .view-head {
+        flex: none;
+        margin-bottom: 10px;
+      }
+
+      .view-head h2 {
+        margin-bottom: 4px;
+        font-size: 30px;
+      }
+
+      .view-head p {
+        margin-bottom: 0;
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .game-layout,
+      .design-board,
+      .dev-layout,
+      .wide-layout {
+        flex: 1;
+        min-height: 0;
+        gap: 12px;
+      }
+
+      .game-layout {
+        grid-template-columns: 1.08fr 0.82fr;
+      }
+
+      .design-board {
+        grid-template-columns: minmax(330px, 1fr) 320px;
+      }
+
+      .design-board > .panel {
+        min-height: 0;
+      }
+
+      .design-status-slot {
+        flex: none;
+        min-height: 56px;
+      }
+
+      .design-summary-slot {
+        flex: none;
+        min-height: 86px;
+      }
+
+      .design-board {
+        flex: 1;
+        height: auto;
+        min-height: 0;
+        align-items: stretch;
+      }
+
+      .dev-layout {
+        grid-template-columns: minmax(360px, 1fr) 370px;
+      }
+
+      .product-scene {
+        min-height: 0;
+        height: min(42vh, 350px);
+      }
+
+      .design-scene {
+        min-height: 0;
+        height: auto;
+      }
+
+      .product-scene {
+        height: min(34vh, 285px);
+      }
+
+      .product-layout > .panel {
+        min-height: 0;
+      }
+
+      .product-task-card {
+        flex: none;
+        margin-bottom: 8px;
+        padding: 10px 12px;
+      }
+
+      .product-task-card h3 {
+        margin-bottom: 5px;
+        font-size: 18px;
+      }
+
+      .product-task-card .mission-list li {
+        font-size: 14px;
+        line-height: 1.25;
+      }
+
+      .maintain-scene {
+        min-height: 0;
+        height: auto;
+      }
+
+      .product-final-ship {
+        width: min(330px, 82%);
+      }
+
+      .floating-wish-info {
+        min-height: 0;
+        width: min(520px, calc(100% - 28px));
+        padding: 12px 14px;
+        font-size: 16px;
+        line-height: 1.32;
+      }
+
+      .wish {
+        min-height: 72px;
+        padding: 10px 14px;
+      }
+
+      .wish .wish-title {
+        font-size: 20px;
+      }
+
+      .wish .wish-sub {
+        font-size: 16px;
+      }
+
+      .info-box,
+      .goal-box {
+        min-height: 0;
+        padding: 12px 14px;
+        font-size: 19px;
+        line-height: 1.32;
+      }
+
+      .design-rocket-wrap {
+        width: min(54vh, 510px, calc(100% - 8px));
+        max-height: calc(100% - 4px);
+      }
+
+      .design-control-panel {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .design-control-panel h3 {
+        margin-bottom: 6px;
+        font-size: 20px;
+      }
+
+      .design-control-panel p {
+        margin-bottom: 8px;
+        font-size: 16px;
+        line-height: 1.25;
+      }
+
+      .palette,
+      .part-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .color-btn {
+        min-height: 42px;
+        padding: 7px 9px;
+        gap: 6px;
+        font-size: 14px;
+      }
+
+      .mini-btn {
+        min-height: 34px;
+        padding: 7px 8px;
+        font-size: 14px;
+      }
+
+      .swatch {
+        width: 20px;
+        height: 20px;
+      }
+
+      .dev-map-panel,
+      .dev-code-panel {
+        min-height: 0;
+      }
+
+      .settings-row {
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .settings-row label {
+        font-size: 14px;
+      }
+
+      .dev-code-panel h3 {
+        margin-bottom: 6px;
+        font-size: 14px;
+        line-height: 1.2;
+      }
+
+      .maze {
+        width: 100%;
+        gap: 4px;
+        padding: 6px;
+      }
+
+      .cell {
+        border-radius: 6px;
+        font-size: clamp(22px, 3.8vh, 40px);
+      }
+
+      .code-box {
+        height: auto;
+        flex: 1;
+        min-height: 0;
+        margin-top: 10px !important;
+        padding: 10px;
+      }
+
+      .code-line {
+        min-height: 30px;
+        padding: 5px 8px;
+        font-size: 17px;
+      }
+
+      .button-row {
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .maintain-topline,
+      .maintain-control-row {
+        margin-bottom: 10px;
+      }
+
+      .maintain-control-row {
+        gap: 8px;
+      }
+
+      .maintain-actions {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .maintain-count {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 14px;
+      }
+
+      .maintain-topline .settings-row label {
+        font-size: 14px;
+      }
+
+      .maintain-control-row {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+
+      .maintain-actions-box h3 {
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      .maintain-actions button {
+        min-height: 40px;
+        padding: 8px 9px;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .earth {
+        width: 132px;
+        height: 132px;
+        right: 42px;
+        top: 34px;
+      }
+
+      .return-ship {
+        font-size: 104px;
+      }
+
+      .crisis-effect {
+        width: 150px;
+        min-height: 66px;
+        font-size: 36px;
+      }
+
+      .crisis-panel {
+        padding: 12px 14px;
+      }
+
+      .crisis-panel h3 {
+        margin-bottom: 6px;
+        font-size: 20px;
+      }
+
+      .crisis-panel p {
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .meter {
+        height: 22px;
+      }
+
+      .summary-card {
+        flex: none;
+        margin-top: 10px;
+        padding: 12px 14px;
+      }
+
+      .summary-card strong {
+        margin-bottom: 4px;
+        font-size: 19px;
+      }
+
+      .summary-card p {
+        margin-bottom: 0;
+        font-size: 17px;
+        line-height: 1.35;
+      }
+    }
+
     @media (max-width: 980px) {
       .topbar, .hero, .game-layout, .design-board, .dev-layout, .maintain-control-row {
         grid-template-columns: 1fr;
@@ -1434,10 +1964,16 @@
     };
 
     const MAZE_OBSTACLE_COUNTS = {
-      5: { easy: 3, normal: 5, challenge: 7 },
-      6: { easy: 5, normal: 8, challenge: 11 },
-      7: { easy: 7, normal: 11, challenge: 15 }
+      "5x7": { easy: 4, normal: 7, challenge: 10 },
+      "6x8": { easy: 6, normal: 10, challenge: 14 },
+      "7x9": { easy: 8, normal: 13, challenge: 18 }
     };
+
+    const MAZE_SIZES = [
+      { key: "5x7", rows: 5, cols: 7, label: "5×7" },
+      { key: "6x8", rows: 6, cols: 8, label: "6×8" },
+      { key: "7x9", rows: 7, cols: 9, label: "7×9" }
+    ];
 
     const CRISIS_LIST = [
       { id: "cold", name: "低温结冰", message: "飞船进入低温区，外壳开始结冰！", effectClass: "ship-cold", correctAction: "heat", correctText: "🔥 加温", emoji: "❄️❄️" },
@@ -1486,7 +2022,7 @@
         completed: false
       },
       develop: {
-        size: 5,
+        sizeKey: "5x7",
         difficulty: "easy",
         obstacles: [],
         commands: [],
@@ -1609,11 +2145,10 @@
 
     function renderHome() {
       return `
-        <main class="page">
+        <main class="page home-page">
           <section class="hero">
             <div>
               <h1>《火星探索·中国号》</h1>
-              <p class="lead"><strong>首页大厅</strong></p>
               <p class="lead">用一次火星任务，认识软件开发团队里的四个岗位。</p>
               <p>同学们，今天我们要一起完成一次特别的火星任务。这次任务不是一个人完成的，而是由四个不同岗位一起合作完成。</p>
               <p><strong>软件开发就像一次火星任务：</strong>有人定目标，有人画样子，有人让它动起来，有人保护它稳定运行。</p>
@@ -1651,8 +2186,8 @@
             </div>
             <button class="gold" data-action="tip" data-stage="product">💬 讲解提示</button>
           </div>
-          <div class="game-layout">
-            <section class="panel">
+          <div class="game-layout product-layout">
+            <section class="panel product-main-panel">
               <div class="goal-box">总目标：把航天员安全送到火星，完成科学探索，再平安回家。</div>
               <div class="product-scene">
                 <div class="floating-wish-info" id="productWishFloat">${selected && !appState.product.decided ? `好处：${selected.benefit}<br>代价：${selected.tradeoff}` : ""}</div>
@@ -1663,7 +2198,7 @@
                 `}
               </div>
             </section>
-            <aside class="panel">
+            <aside class="panel product-side-panel">
               <h3>愿望泡泡</h3>
               <div class="wish-list">
                 ${PRODUCT_WISHES.map((wish) => `
@@ -1677,7 +2212,7 @@
             </aside>
           </div>
           ${appState.product.decided ? `
-            <section class="panel" style="margin-top:18px;">
+            <section class="product-task-card">
               <h3>📋 任务单：火星探索·中国号</h3>
               <ul class="mission-list">
                 <li>主功能：安全第一，使用轻质坚固的新型材料。</li>
@@ -1724,7 +2259,7 @@
                 </div>
               </div>
             </section>
-            <aside class="panel">
+            <aside class="panel design-control-panel">
               <h3>操作台</h3>
               <p>先选区域，再点颜色。当前区域：<strong>${selectedName}</strong></p>
               <div class="part-list">
@@ -1748,8 +2283,10 @@
               <button class="success" style="width:100%;margin-top:16px;" data-action="finish-design">完成设计</button>
             </aside>
           </div>
-          ${appState.design.completed ? `<div class="status-message" style="margin-top:18px;">设计完成！现在这艘飞船更好看、更醒目，也更容易被大家认出来了。 ✨</div>` : ""}
-          ${summaryCard("design")}
+          <div class="status-message design-status-slot ${appState.design.completed ? "is-visible" : ""}" style="margin-top:10px;">设计完成！现在这艘飞船更好看、更醒目，也更容易被大家认出来了。 ✨</div>
+          <div class="design-summary-slot ${appState.design.completed ? "is-visible" : ""}">
+            <div class="panel summary-card"><strong>${SUMMARY_CARDS.design.title}</strong><p>${SUMMARY_CARDS.design.text}</p></div>
+          </div>
           ${navButtons("design")}
         </main>
       `;
@@ -1770,7 +2307,7 @@
               <div class="settings-row">
                 <label>网格大小
                   <select data-action="set-dev-size" ${appState.develop.running ? "disabled" : ""}>
-                    ${[5,6,7].map((size) => `<option value="${size}" ${appState.develop.size === size ? "selected" : ""}>${size}×${size}</option>`).join("")}
+                    ${MAZE_SIZES.map((size) => `<option value="${size.key}" ${appState.develop.sizeKey === size.key ? "selected" : ""}>${size.label}</option>`).join("")}
                   </select>
                 </label>
                 <label>难度
@@ -1822,14 +2359,14 @@
     }
 
     function mazeHtml() {
-      const size = appState.develop.size;
+      const { rows, cols } = currentMazeSize();
       const ship = appState.develop.position;
-      const goal = { x: size - 1, y: 0 };
-      const start = { x: 0, y: size - 1 };
+      const goal = { x: cols - 1, y: 0 };
+      const start = { x: 0, y: rows - 1 };
       const obstacleSet = new Set(appState.develop.obstacles.map((item) => `${item.x},${item.y}`));
       const cells = [];
-      for (let y = 0; y < size; y += 1) {
-        for (let x = 0; x < size; x += 1) {
+      for (let y = 0; y < rows; y += 1) {
+        for (let x = 0; x < cols; x += 1) {
           const key = `${x},${y}`;
           const hasShip = ship.x === x && ship.y === y;
           const isGoal = goal.x === x && goal.y === y;
@@ -1845,15 +2382,17 @@
           `);
         }
       }
-      return `<div class="maze" id="maze" style="grid-template-columns:repeat(${size}, 1fr);">${cells.join("")}</div>`;
+      return `<div class="maze" id="maze" style="--maze-rows:${rows};--maze-cols:${cols};grid-template-columns:repeat(${cols}, 1fr);">${cells.join("")}</div>`;
     }
 
     function renderMaintain() {
       const crisis = appState.maintain.crisis;
       const shipClass = crisis ? crisis.effectClass : "";
       const progress = Math.min(appState.maintain.solved, appState.maintain.target) / appState.maintain.target;
-      const shipLeft = 18 + progress * 62;
+      const shipLeft = 12 + progress * 64;
+      const shipTop = 70 - progress * 50;
       const effectLeft = Math.max(8, shipLeft - 5);
+      const effectTop = Math.max(18, shipTop - 9);
       return `
         <main class="page">
           <div class="view-head">
@@ -1864,12 +2403,12 @@
             <button class="gold" data-action="tip" data-stage="maintain">💬 讲解提示</button>
           </div>
           <div class="wide-layout">
-            <section class="panel">
+            <section class="panel maintain-panel">
               <div class="maintain-topline">
                 <div class="settings-row" style="margin-bottom:0;">
                   <label>危机次数
                     <select data-action="set-maintain-target" ${appState.maintain.active ? "disabled" : ""}>
-                      ${[3,5,6].map((num) => `<option value="${num}" ${appState.maintain.target === num ? "selected" : ""}>${num} 次</option>`).join("")}
+                      ${[3,6,9].map((num) => `<option value="${num}" ${appState.maintain.target === num ? "selected" : ""}>${num} 次</option>`).join("")}
                     </select>
                   </label>
                   <label>出现速度
@@ -1883,12 +2422,8 @@
               </div>
 
               <div class="maintain-control-row">
-                <div class="maintain-status-box">
-                  <h3>飞船状态</h3>
-                  <div class="meter"><div class="meter-fill" style="--meter:${appState.maintain.status}%"></div></div>
-                </div>
                 <div class="maintain-actions-box">
-                  <h3>应急按钮</h3>
+                  <h3>应急操作台</h3>
                   <div class="actions-grid maintain-actions">
                     ${MAINTAIN_ACTIONS.map((action) => `<button class="primary" data-action="maintain-action" data-maintain-action="${action.id}" ${!crisis || appState.maintain.returning ? "disabled" : ""}>${action.text}</button>`).join("")}
                   </div>
@@ -1897,8 +2432,8 @@
 
               <div class="maintain-scene">
                 <div class="earth" title="地球"></div>
-                <div class="return-ship ${shipClass} ${appState.maintain.success ? "success-flight" : ""}" style="left:${shipLeft}%">🚀</div>
-                <div class="crisis-effect" style="left:${effectLeft}%">${crisis ? crisis.emoji : appState.maintain.success ? "🎉" : ""}</div>
+                <div class="return-ship ${shipClass} ${appState.maintain.success ? "success-flight" : ""}" style="left:${shipLeft}%;top:${shipTop}%">🚀</div>
+                <div class="crisis-effect" style="left:${effectLeft}%;top:${effectTop}%">${crisis ? crisis.emoji : appState.maintain.success ? "🎉" : ""}</div>
                 <div class="crisis-panel">
                   <h3>${crisis ? `${crisis.emoji} 当前危机：${crisis.name}` : appState.maintain.success ? "🎉 返航完成" : appState.maintain.returning ? "🚀 正在靠近地球" : "🛰️ 返航提示"}</h3>
                   <p>${appState.maintain.message}</p>
@@ -2040,6 +2575,10 @@
       };
     }
 
+    function currentMazeSize() {
+      return MAZE_SIZES.find((size) => size.key === appState.develop.sizeKey) || MAZE_SIZES[0];
+    }
+
     function shuffleCells(cells) {
       const copy = cells.slice();
       for (let i = copy.length - 1; i > 0; i -= 1) {
@@ -2049,9 +2588,9 @@
       return copy;
     }
 
-    function hasReachablePath(size, obstacles) {
-      const start = { x: 0, y: size - 1 };
-      const goal = { x: size - 1, y: 0 };
+    function hasReachablePath(rows, cols, obstacles) {
+      const start = { x: 0, y: rows - 1 };
+      const goal = { x: cols - 1, y: 0 };
       const blocked = new Set(obstacles.map((item) => `${item.x},${item.y}`));
       const queue = [start];
       const visited = new Set([`${start.x},${start.y}`]);
@@ -2068,7 +2607,7 @@
         for (const step of steps) {
           const next = { x: current.x + step.x, y: current.y + step.y };
           const key = `${next.x},${next.y}`;
-          if (next.x < 0 || next.y < 0 || next.x >= size || next.y >= size) continue;
+          if (next.x < 0 || next.y < 0 || next.x >= cols || next.y >= rows) continue;
           if (blocked.has(key) || visited.has(key)) continue;
           visited.add(key);
           queue.push(next);
@@ -2077,33 +2616,35 @@
       return false;
     }
 
-    function generateRandomObstacles(size, difficulty) {
-      const count = MAZE_OBSTACLE_COUNTS[size][difficulty];
+    function generateRandomObstacles(rows, cols, difficulty) {
+      const count = MAZE_OBSTACLE_COUNTS[`${rows}x${cols}`][difficulty];
       const protectedCells = new Set([
-        `0,${size - 1}`,
-        `${size - 1},0`,
-        `0,${size - 2}`
+        `0,${rows - 1}`,
+        `${cols - 1},0`,
+        `0,${rows - 2}`,
+        `1,${rows - 1}`,
+        `${cols - 2},0`
       ]);
       const candidates = [];
-      for (let y = 0; y < size; y += 1) {
-        for (let x = 0; x < size; x += 1) {
+      for (let y = 0; y < rows; y += 1) {
+        for (let x = 0; x < cols; x += 1) {
           if (!protectedCells.has(`${x},${y}`)) candidates.push({ x, y });
         }
       }
 
       for (let attempt = 0; attempt < 200; attempt += 1) {
         const obstacles = shuffleCells(candidates).slice(0, count);
-        if (hasReachablePath(size, obstacles)) return obstacles;
+        if (hasReachablePath(rows, cols, obstacles)) return obstacles;
       }
 
       return [];
     }
 
     function resetMaze() {
-      const size = appState.develop.size;
-      appState.develop.obstacles = generateRandomObstacles(size, appState.develop.difficulty);
+      const { rows, cols } = currentMazeSize();
+      appState.develop.obstacles = generateRandomObstacles(rows, cols, appState.develop.difficulty);
       appState.develop.commands = [];
-      appState.develop.position = { x: 0, y: size - 1 };
+      appState.develop.position = { x: 0, y: rows - 1 };
       appState.develop.direction = "up";
       appState.develop.running = false;
       appState.develop.activeLine = -1;
@@ -2217,6 +2758,7 @@
 
     function addCommand(command) {
       if (appState.develop.running) return;
+      const { rows, cols } = currentMazeSize();
       appState.develop.notice = null;
       appState.develop.commands.push(command);
       appState.develop.activeLine = appState.develop.commands.length - 1;
@@ -2231,7 +2773,7 @@
 
       const delta = DIRECTION_DELTA[appState.develop.direction];
       const next = { x: appState.develop.position.x + delta.x, y: appState.develop.position.y + delta.y };
-      const out = next.x < 0 || next.y < 0 || next.x >= appState.develop.size || next.y >= appState.develop.size;
+      const out = next.x < 0 || next.y < 0 || next.x >= cols || next.y >= rows;
       if (out || isObstacle(next)) {
         appState.develop.message = "这一步会碰到石头或飞出地图，代码已清空，请重新规划路线。";
         appState.develop.notice = {
@@ -2243,7 +2785,7 @@
         const ship = document.getElementById("mazeShip");
         if (ship) ship.classList.add("shake");
         setTimeout(() => {
-          appState.develop.position = { x: 0, y: appState.develop.size - 1 };
+          appState.develop.position = { x: 0, y: rows - 1 };
           appState.develop.direction = "up";
           appState.develop.commands = [];
           appState.develop.activeLine = -1;
@@ -2255,7 +2797,7 @@
 
       appState.develop.position = next;
       appState.develop.message = "已添加：forward()，飞船前进一步。";
-      if (next.x === appState.develop.size - 1 && next.y === 0) {
+      if (next.x === cols - 1 && next.y === 0) {
         appState.develop.success = true;
         appState.develop.message = "飞船预演到达火星！点击执行代码检查一遍。";
         appState.develop.notice = {
@@ -2283,9 +2825,10 @@
 
     async function runCode() {
       if (appState.develop.running || !appState.develop.commands.length) return;
+      const { rows, cols } = currentMazeSize();
       appState.develop.running = true;
       appState.develop.success = false;
-      appState.develop.position = { x: 0, y: appState.develop.size - 1 };
+      appState.develop.position = { x: 0, y: rows - 1 };
       appState.develop.direction = "up";
       appState.develop.message = "代码开始执行，请观察飞船动作。";
       appState.develop.notice = null;
@@ -2307,14 +2850,14 @@
         }
         const delta = DIRECTION_DELTA[appState.develop.direction];
         const next = { x: appState.develop.position.x + delta.x, y: appState.develop.position.y + delta.y };
-        const out = next.x < 0 || next.y < 0 || next.x >= appState.develop.size || next.y >= appState.develop.size;
+        const out = next.x < 0 || next.y < 0 || next.x >= cols || next.y >= rows;
         if (out || isObstacle(next)) {
           failDevelop();
           return;
         }
         appState.develop.position = next;
         render();
-        if (next.x === appState.develop.size - 1 && next.y === 0) {
+        if (next.x === cols - 1 && next.y === 0) {
           appState.develop.success = true;
           appState.develop.running = false;
           appState.develop.activeLine = -1;
@@ -2344,7 +2887,7 @@
       const ship = document.getElementById("mazeShip");
       if (ship) ship.classList.add("shake");
       setTimeout(() => {
-        appState.develop.position = { x: 0, y: appState.develop.size - 1 };
+        appState.develop.position = { x: 0, y: currentMazeSize().rows - 1 };
         appState.develop.direction = "up";
         appState.develop.commands = [];
         appState.develop.activeLine = -1;
@@ -2357,7 +2900,7 @@
       appState.completed = { product: false, design: false, develop: false, maintain: false };
       resetProduct();
       resetDesign();
-      appState.develop.size = 5;
+      appState.develop.sizeKey = "5x7";
       appState.develop.difficulty = "easy";
       resetMaze();
       resetMaintain(false);
@@ -2426,7 +2969,7 @@
         appState.develop.commands = [];
         appState.develop.activeLine = -1;
         appState.develop.success = false;
-        appState.develop.position = { x: 0, y: appState.develop.size - 1 };
+        appState.develop.position = { x: 0, y: currentMazeSize().rows - 1 };
         appState.develop.direction = "up";
         appState.develop.notice = null;
         appState.develop.message = "代码已清空，可以重新安排路线。";
@@ -2447,10 +2990,16 @@
       if (!target) return;
       const action = target.dataset.action;
       if (action === "set-dev-size") {
-        appState.develop.size = Number(target.value);
+        appState.develop.sizeKey = target.value;
+        resetMaze();
+        render();
+        return;
       }
       if (action === "set-dev-difficulty") {
         appState.develop.difficulty = target.value;
+        resetMaze();
+        render();
+        return;
       }
       if (action === "set-maintain-target") {
         appState.maintain.target = Number(target.value);
