@@ -1561,12 +1561,13 @@
       const index = stageIndex(id);
       const prev = STAGES[index - 1];
       const next = STAGES[index + 1];
+      const completedAll = allCompleted();
       return `
         <div class="button-row">
-          ${prev ? `<button class="secondary" data-action="go" data-view="${prev.id}">上一关</button>` : `<button class="secondary" data-action="go" data-view="home">返回首页</button>`}
-          ${next ? `<button class="primary" data-action="go" data-view="${next.id}">下一关</button>` : `<button class="primary" data-action="go" data-view="summary">查看总结</button>`}
+          ${prev ? `<button class="secondary" data-action="go" data-view="${prev.id}">上一关</button>` : ""}
+          ${next ? `<button class="primary" data-action="go" data-view="${next.id}">下一关</button>` : completedAll ? "" : `<button class="primary" data-action="go" data-view="summary">查看总结</button>`}
           <button class="secondary" data-action="go" data-view="home">返回首页</button>
-          ${allCompleted() ? `<button class="gold" data-action="go" data-view="summary">🎉 查看总结</button>` : ""}
+          ${completedAll ? `<button class="gold" data-action="go" data-view="summary">🎉 查看总结</button>` : ""}
         </div>
       `;
     }
